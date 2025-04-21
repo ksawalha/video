@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fullscreen Video</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: black;
+    }
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      pointer-events: none; /* Prevent interactions with buttons in the iframe */
+    }
+
+    /* Hide Google Drive UI elements using style isolation */
+    iframe::-webkit-media-controls,
+    iframe::-webkit-media-controls-enclosure {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <iframe
+    src="https://drive.google.com/file/d/18bnHz_kaxumVt6x1MgAD_b-XHzRXYUvx/preview"
+    allow="autoplay; fullscreen"
+  ></iframe>
+</body>
+</html>
