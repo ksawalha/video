@@ -10,6 +10,8 @@
       overflow: hidden;
       background-color: black;
     }
+
+    /* The iframe styling */
     iframe {
       position: absolute;
       top: 0;
@@ -17,6 +19,25 @@
       width: 100vw;
       height: 100vh;
       border: none;
+    }
+
+    /* This creates a container around the iframe to prevent interaction with Google Drive UI */
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Hide the external link button using absolute positioning and the iframe stacking order */
+    .video-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50px; /* Adjust the size of the external link button */
+      height: 50px;
+      background-color: transparent; /* Make the button's background invisible */
+      z-index: 1000;
     }
   </style>
 </head>
