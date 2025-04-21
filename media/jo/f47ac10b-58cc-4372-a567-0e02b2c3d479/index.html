@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Video Player</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
-      background-color: black;
+      background-color: #000;
     }
     
-    .video-container {
+    .player-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -23,31 +24,68 @@
       align-items: center;
     }
 
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      max-height: 100vh;
+    }
+
     iframe {
       width: 100%;
       height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
       border: none;
+      display: block;
     }
 
-    /* Hide popout button */
-    .ytp-popout-button {
-      display: none !important;
+    /* Custom controls overlay */
+    .custom-controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Allows clicks to pass through to iframe */
     }
 
-    /* For wider screens (landscape) */
+    /* Custom fullscreen button (positioned where native popout would be) */
+    .custom-fullscreen {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      pointer-events: auto; /* Enable clicks */
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .custom-fullscreen:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .custom-fullscreen svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    /* Aspect ratio handling */
     @media (min-aspect-ratio: 16/9) {
-      iframe {
+      .video-wrapper {
         width: 177.78vh; /* 16/9 * 100vh */
         height: 100vh;
       }
     }
 
-    /* For taller screens (portrait) */
     @media (max-aspect-ratio: 16/9) {
-      iframe {
+      .video-wrapper {
         width: 100vw;
         height: 56.25vw; /* 9/16 * 100vw */
       }
@@ -55,11 +93,55 @@
   </style>
 </head>
 <body>
-  <div class="video-container">
-    <iframe
-      src="https://drive.google.com/file/d/18bnHz_kaxumVt6x1MgAD_b-XHzRXYUvx/preview"
-      allow="autoplay; fullscreen"
-    ></iframe>
+  <div class="player-container">
+    <div class="video-wrapper">
+      <iframe
+        src="https://drive.google.com/file/d/18bnHz_kaxumVt6x1MgAD_b-XHzRXYUvx/preview"
+        allow="autoplay; fullscreen"
+      ></iframe>
+      
+      <div class="custom-controls">
+        <div class="custom-fullscreen" onclick="toggleFullscreen()">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <script>
+    function toggleFullscreen() {
+      const container = document.querySelector('.player-container');
+      
+      if (!document.fullscreenElement) {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) { /* Safari */
+          container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) { /* IE11 */
+          container.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+          document.msExitFullscreen();
+        }
+      }
+    }
+
+    // Hide native controls when in fullscreen
+    document.addEventListener('fullscreenchange', () => {
+      const iframe = document.querySelector('iframe');
+      if (document.fullscreenElement) {
+        iframe.src = iframe.src.split('?')[0] + '?toolbar=0&navpanes=0';
+      } else {
+        iframe.src = iframe.src.split('?')[0];
+      }
+    });
+  </script>
 </body>
 </html>
